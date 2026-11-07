@@ -2,6 +2,10 @@
 
 import csv
 import sys
+from pathlib import Path
+
+# Default to the CSV next to this script, so it runs from any folder.
+DEFAULT_CSV = Path(__file__).resolve().parent / "penguins.csv"
 
 # Values treated as "missing". This file uses "NA"; other copies leave the cell blank.
 MISSING = {"", "NA", "NaN", "nan", "null", "None"}
@@ -11,7 +15,7 @@ def is_missing(value):
     return value is None or value.strip() in MISSING
 
 
-def main(path="penguins.csv"):
+def main(path=DEFAULT_CSV):
     with open(path, newline="", encoding="utf-8") as f:
         reader = csv.reader(f)
         header = next(reader)
@@ -41,4 +45,4 @@ def main(path="penguins.csv"):
 
 
 if __name__ == "__main__":
-    main(sys.argv[1] if len(sys.argv) > 1 else "penguins.csv")
+    main(sys.argv[1] if len(sys.argv) > 1 else DEFAULT_CSV)
