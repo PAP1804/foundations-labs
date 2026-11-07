@@ -24,7 +24,7 @@ foundations-labs/
 | 1 | [`day1.py`](week1/day1.py): first look at the Palmer Penguins CSV, row and missing-value counts | Done |
 | 2 | [`day2.py`](week1/day2.py): counts per species, missing per column, species with most missing rows | Done |
 | 3 | [`day3.py`](week1/day3.py): the same answers as one-job functions | Done |
-| 4 | Data structures: counter pattern, tuple returns, week synthesis | Outstanding |
+| 4 | [`day4.py`](week1/day4.py): the answers with dicts (counter pattern) and a tuple; [Week 1 cleaning log](week1/README.md#week-1-cleaning-log) | Done |
 
 ## Running
 

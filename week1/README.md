@@ -2,6 +2,27 @@
 
 Phase 0, Week 1 of the Applied Analytics, ML & AI track (Nov 2026).
 
+## Week 1 cleaning log
+
+**The data.** `penguins.csv` is the Palmer Penguins dataset: 344 penguins measured on 3 islands in Antarctica (Biscoe, Dream, Torgersen) from 2007 to 2009. 8 columns: `species`, `island`, `bill_length_mm`, `bill_depth_mm`, `flipper_length_mm`, `body_mass_g`, `sex`, `year`. SHA-256 `f204db2c…22767a93` (full hash in the root README).
+
+**What was missing.** 11 of 344 rows have at least one missing value, always written as the text `NA`, never a blank cell. They follow two patterns:
+- 9 rows are missing only `sex`; every measurement is present.
+- 2 rows are missing all four measurements and `sex`; only species, island and year are known.
+
+**What I decided.**
+- Treat blanks, `NA`, `NaN`, `null` and `None` as missing. A blank-only check (`v == ""`) reports 0 missing rows on this file.
+- Count and report missing values; don't drop or fill any rows yet. Dropping all 11 would throw away the full measurements of the 9 birds missing only `sex`, so that decision waits for an analysis that needs it.
+- Keep every value as a string for now; converting to numbers comes when the analysis needs arithmetic.
+- Ties for "most missing" go to the alphabetically first species, so the answer is deterministic.
+
+**The three answers.**
+1. **Penguins per species:** Adelie 152, Gentoo 124, Chinstrap 68 (total 344).
+2. **Missing values per column:** `sex` 11; `bill_length_mm`, `bill_depth_mm`, `flipper_length_mm`, `body_mass_g` 2 each; `species`, `island`, `year` 0.
+3. **Species with the most rows containing a missing value:** Adelie, 6 rows (3.9% of 152). Gentoo has 5 (4.0% of 124), so by rate it is slightly higher; Chinstrap has none.
+
+**Open question.** Why is `sex` unknown for 9 birds that were fully measured, and does excluding them bias any species or island?
+
 ## What this week covers
 
 1. Variables and types — assignment, rebinding vs mutation, `==` vs `is`
@@ -14,7 +35,7 @@ Phase 0, Week 1 of the Applied Analytics, ML & AI track (Nov 2026).
 - **Day 1 — done.** `day1.py` (stdlib `csv` only): prints column names and the first 5 rows of the Palmer Penguins CSV, counts total rows and rows with any missing value. Result: 344 rows, 11 with a missing value. Details below.
 - **Day 2 — done.** `day2.py`: count per species, missing per column, species with most missing rows. Result: Adelie 152, Chinstrap 68, Gentoo 124; `sex` missing in 11 rows; Adelie has the most missing rows (6). Details below.
 - **Day 3 — done.** `day3.py`: the Day 2 program refactored into one-job functions (`read_rows`, `count_species`, `missing_per_column`, `missing_rows_per_species`, `species_most_missing`, `main`, plus small helpers). Output identical to Day 2. Details below.
-- Day 4 — data structures: same three CSV questions with the right structures (counter pattern, tuple return). Outstanding.
+- **Day 4 — done.** `day4.py`: the three answers built with the structures each wants: list of dicts, counter-pattern dicts, and a `(species, count)` tuple. Details below.
 
 ## Day 1 — first look at the data
 
@@ -117,3 +138,41 @@ Output: identical to Day 2 (checked with `diff`), shown above.
 - **Return a tuple when the answer has two parts.** `species_most_missing` returns both the leaders and the count, so the caller doesn't recompute `max()`.
 - **A refactor should not change results.** Diffing Day 3's output against Day 2's confirmed the behaviour is unchanged.
 - **Edge cases are easier to check in small functions.** `max(..., default=0)` keeps `species_most_missing({})` from crashing on an empty file.
+
+## Day 4 — data structures
+
+```bash
+python3 week1/day4.py
+```
+
+Output:
+
+```
+Total rows: 344
+
+1. Penguins per species:
+   Adelie      152
+   Chinstrap    68
+   Gentoo      124
+
+2. Rows with a missing value, per column:
+   species               0
+   island                0
+   bill_length_mm        2
+   bill_depth_mm         2
+   flipper_length_mm     2
+   body_mass_g           2
+   sex                  11
+   year                  0
+
+3. Species with the most rows containing a missing value:
+   Adelie: 6 rows (3.9% of 152)
+```
+
+### Takeaways
+
+- **`counts.get(key, 0) + 1` replaces the `if`/`else` counter.** One line does what took four on Day 2, and the dict still discovers species from the data.
+- **Each answer has a natural shape.** Rows are a list (ordered, one per penguin), counts are dicts (look up by name), and "which and how many" is a tuple, which unpacks cleanly: `species, count = species_most_missing(rows)`.
+- **A single `(species, count)` tuple has to settle ties.** Day 3 returned every tied species; here `min(..., key=lambda item: (-item[1], item[0]))` picks the highest count, then the first name, so the same data always gives the same answer.
+- **Empty input needs a defined answer.** `species_most_missing([])` returns `(None, 0)` and `missing_per_column([])` returns `{}`, rather than crashing on `rows[0]` or `max()` of nothing.
+- **Same answers four ways.** Days 2–4 all print 152 / 68 / 124, 11 missing `sex`, and Adelie with 6, so the structure changed without changing the results.
