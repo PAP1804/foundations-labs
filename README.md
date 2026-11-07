@@ -22,7 +22,7 @@ foundations-labs/
 | Day | Lab | Status |
 |-----|-----|--------|
 | 1 | [`day1.py`](week1/day1.py): first look at the Palmer Penguins CSV, row and missing-value counts | Done |
-| 2 | Control flow: counts per species, missing per column | Outstanding |
+| 2 | [`day2.py`](week1/day2.py): counts per species, missing per column, species with most missing rows | Done |
 | 3 | Functions: refactor the CSV program into functions | Outstanding |
 | 4 | Data structures: counter pattern, tuple returns, week synthesis | Outstanding |
 
@@ -38,9 +38,11 @@ python3 week1/day1.py
 
 ## Data
 
-| Dataset | File | Source | License | Used in |
-|---------|------|--------|---------|---------|
-| Palmer Penguins | [`week1/penguins.csv`](week1/penguins.csv) | Gorman, Williams & Fraser (2014), via [palmerpenguins](https://github.com/allisonhorst/palmerpenguins) | CC0 | Week 1 |
+| Dataset | File | Source | License | SHA-256 | Used in |
+|---------|------|--------|---------|---------|---------|
+| Palmer Penguins | [`week1/penguins.csv`](week1/penguins.csv) | Gorman, Williams & Fraser (2014), via [palmerpenguins](https://github.com/allisonhorst/palmerpenguins) | CC0 | `f204db2c753b0937caac3cb35258562c14f073e4bbc76be24b4c51ce22767a93` | Week 1 |
+
+Verify a dataset before running: `sha256sum week1/penguins.csv` (macOS: `shasum -a 256 week1/penguins.csv`).
 
 ## License
 
