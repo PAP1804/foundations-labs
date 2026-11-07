@@ -1,3 +1,6 @@
+# Contents: 344 Palmer Penguins (3 species, 3 islands, 2007-2009), 8 columns: species, island, 4 body measurements, sex, year.
+# Missing: written as the text "NA", never a blank cell; 11 rows affected (9 lack only sex, 2 lack all 4 measurements and sex).
+# Question: why is sex unknown for 9 birds that were fully measured, and does dropping them bias any species or island?
 """Week 1, Day 1: first look at the Palmer Penguins CSV using only the stdlib csv module."""
 
 import csv
