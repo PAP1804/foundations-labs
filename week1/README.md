@@ -13,7 +13,7 @@ Phase 0, Week 1 of the Applied Analytics, ML & AI track (Nov 2026).
 
 - **Day 1 — done.** `day1.py` (stdlib `csv` only): prints column names and the first 5 rows of the Palmer Penguins CSV, counts total rows and rows with any missing value. Result: 344 rows, 11 with a missing value. Details below.
 - **Day 2 — done.** `day2.py`: count per species, missing per column, species with most missing rows. Result: Adelie 152, Chinstrap 68, Gentoo 124; `sex` missing in 11 rows; Adelie has the most missing rows (6). Details below.
-- Day 3 — functions: refactor into `read_rows` / `count_species` / `missing_per_column` / `species_most_missing` / `main`. Outstanding.
+- **Day 3 — done.** `day3.py`: the Day 2 program refactored into one-job functions (`read_rows`, `count_species`, `missing_per_column`, `missing_rows_per_species`, `species_most_missing`, `main`, plus small helpers). Output identical to Day 2. Details below.
 - Day 4 — data structures: same three CSV questions with the right structures (counter pattern, tuple return). Outstanding.
 
 ## Day 1 — first look at the data
@@ -88,3 +88,32 @@ Total rows: 344
 - **"Most" depends on counts vs rates.** Adelie has the most missing rows (6 of 152 = 3.9%), but Gentoo's rate is slightly higher (5 of 124 = 4.0%). Chinstrap has none. With so few, the difference means little, but the question needs to say which one it means.
 - **Handle ties and the zero case explicitly.** `max()` alone silently picks one winner; the script lists every species tied at the top and says so when nothing is missing.
 - **Sanity-check totals.** 152 + 68 + 124 = 344 and 6 + 0 + 5 = 11 both match the Day 1 counts, which confirms no rows were dropped or double-counted.
+
+## Day 3 — functions: one function, one job
+
+```bash
+python3 week1/day3.py
+```
+
+Output: identical to Day 2 (checked with `diff`), shown above.
+
+| Function | Returns |
+|----------|---------|
+| `is_missing(value)` | whether one cell counts as missing |
+| `has_missing(row)` | whether any cell in a row is missing |
+| `read_rows(path)` | `(columns, rows)` from the CSV |
+| `count_species(rows)` | `{species: count}` |
+| `missing_per_column(rows, columns)` | `{column: missing count}` |
+| `missing_rows_per_species(rows)` | `{species: rows with any missing value}` |
+| `species_most_missing(counts)` | `(species tied at the top, their count)` |
+| `format_counts(counts, keys, width)` | aligned report lines |
+| `format_leaders(leaders, top)` | the question-3 verdict line |
+| `main(path)` | nothing: wires the functions together and prints |
+
+### Takeaways
+
+- **The planned `species_most_missing` did two jobs.** Counting missing rows per species and picking the top are separate, so they became `missing_rows_per_species` and `species_most_missing`. Now the ranking can be reused on any `{name: count}` dict, e.g. rates instead of counts.
+- **Calculating and printing are split.** The counting functions return data and never print; `format_*` functions turn data into text; only `main` prints. That makes each answer testable on its own, e.g. `species_most_missing({"A": 2, "B": 2})` returns `(["A", "B"], 2)`.
+- **Return a tuple when the answer has two parts.** `species_most_missing` returns both the leaders and the count, so the caller doesn't recompute `max()`.
+- **A refactor should not change results.** Diffing Day 3's output against Day 2's confirmed the behaviour is unchanged.
+- **Edge cases are easier to check in small functions.** `max(..., default=0)` keeps `species_most_missing({})` from crashing on an empty file.
