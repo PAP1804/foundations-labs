@@ -1,6 +1,6 @@
 # foundations-labs
 
-Hands-on labs for applied data science, AI engineering, financial engineering, and quantitative finance.
+Hands-on labs for applied data science & AI engineering
 
 Each lab is a small, runnable program built from first principles: standard library first, libraries once the fundamentals are clear. Every completed lab records its output and the takeaways learned along the way.
 
