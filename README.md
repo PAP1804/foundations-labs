@@ -26,21 +26,30 @@ foundations-labs/
 | 3 | [`day3.py`](week1/day3.py): the same answers as one-job functions | Done |
 | 4 | [`day4.py`](week1/day4.py): the answers with dicts (counter pattern) and a tuple; [Week 1 cleaning log](week1/README.md#week-1-cleaning-log) | Done |
 
+### [Week 2 — files and paths](week2/README.md)
+
+| Day | Lab | Status |
+|-----|-----|--------|
+| 1 | [`day1.py`](week2/day1.py): Week 1 answers written to [`report.txt`](week2/report.txt) | Done |
+
 ## Running
 
-Requires Python 3 (`python3 --version`; install from https://www.python.org/downloads/). Week 1 uses the standard library only.
+Requires Python 3 (`python3 --version`; install from https://www.python.org/downloads/). Labs use the standard library only so far.
 
 Run any lab from the repo root:
 
 ```bash
 python3 week1/day1.py
+python3 week2/day1.py
 ```
+
+Week 2 scripts use paths relative to the repo root, so they must be run from there.
 
 ## Data
 
 | Dataset | File | Source | License | SHA-256 | Used in |
 |---------|------|--------|---------|---------|---------|
-| Palmer Penguins | [`week1/penguins.csv`](week1/penguins.csv) | Gorman, Williams & Fraser (2014), via [palmerpenguins](https://github.com/allisonhorst/palmerpenguins) | CC0 | `f204db2c753b0937caac3cb35258562c14f073e4bbc76be24b4c51ce22767a93` | Week 1 |
+| Palmer Penguins | [`week1/penguins.csv`](week1/penguins.csv) | Gorman, Williams & Fraser (2014), via [palmerpenguins](https://github.com/allisonhorst/palmerpenguins) | CC0 | `f204db2c753b0937caac3cb35258562c14f073e4bbc76be24b4c51ce22767a93` | Weeks 1–2 |
 
 Verify a dataset before running: `sha256sum week1/penguins.csv` (macOS: `shasum -a 256 week1/penguins.csv`).
 

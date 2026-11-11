@@ -9,4 +9,4 @@ When a lab is marked complete:
 2. In the root `README.md`, set the day's status to Done and link the script. Add a new week section when a week starts.
 3. Any new dataset gets a row in the root README's Data table (file, source, license, where used).
 
-Scripts locate their data relative to their own file (`Path(__file__).parent`), so they run from any folder.
+Week 1 scripts locate their data relative to their own file (`Path(__file__).parent`), so they run from any folder. From Week 2, scripts use `os.path.join` paths relative to the repo root and are run from there (`python weekN/dayN.py`); follow whichever approach the lesson asks for.
