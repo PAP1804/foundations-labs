@@ -31,6 +31,7 @@ foundations-labs/
 | Day | Lab | Status |
 |-----|-----|--------|
 | 1 | [`day1.py`](week2/day1.py): Week 1 answers written to [`report.txt`](week2/report.txt) | Done |
+| 2 | [`day2.py`](week2/day2.py): debug a broken CSV program, one fix per run | Done |
 
 ## Running
 

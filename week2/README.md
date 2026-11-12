@@ -5,6 +5,7 @@ Phase 0, Week 2 of the Applied Analytics, ML & AI track (Nov 2026).
 ## Progress
 
 - **Day 1 — done.** `day1.py` (stdlib `csv` and `os` only): reuses the four Week 1 functions and adds `write_report`, which writes the three answers and the cleaning log to `week2/report.txt`. Details below.
+- **Day 2 — done.** `day2.py`: a deliberately broken copy of the Week 1 program, debugged one fix at a time. Four bugs fixed (three planted, one hidden behind them). Details below.
 
 ## Day 1 — answers written to a report file
 
@@ -57,3 +58,33 @@ Question: is missing data spread evenly across species, or concentrated in one?
 - **`"w"` replaces the file.** Each run rewrites `report.txt` from scratch, so the committed report always matches the code that produced it.
 - **`os.path.join` builds paths portably.** It uses `/` on Linux and macOS and `\` on Windows, so the same script runs everywhere.
 - **Reused code gives the same answers.** The four functions copied from `week1/day4.py` produce 152 / 68 / 124, 11 missing `sex`, and Adelie with 6, matching Week 1.
+
+## Day 2 — debugging: one fix at a time
+
+```bash
+python week2/day2.py
+```
+
+Output after the last fix:
+
+```
+{'Adelie': 152, 'Gentoo': 124, 'Chinstrap': 68}
+Adelie
+```
+
+Each fix was followed by a run:
+
+| Run | Error (last line of the traceback) | Where | Fix |
+|-----|-------------------------------------|-------|-----|
+| 1 | `KeyError: 'specie'` | `count_species`, line 11 | `row["species"]`: the column is `species` |
+| 2 | `TypeError: unsupported operand type(s) for +: 'NoneType' and 'int'` | `count_species`, line 12 | `counts.get(species, 0)`: `get` returns `None` for a new key without a default |
+| 3 | `ValueError: max() iterable argument is empty` | `species_most_missing`, line 21 | return `None` when no row has a missing value |
+| 4 | no error, but prints `None` instead of `Adelie` | `species_most_missing`, line 18 | treat `""` and `"NA"` as missing |
+
+### Takeaways
+
+- **Read the last line, then the bottom frame.** The last line names the error type and value; the bottom frame names the file, line and function. Together they point straight at the fix for runs 1–3.
+- **One fix per run shows what each fix did.** Fixing bug 1 revealed bug 2 on the very next line; fixing bug 3 revealed that the program ran but gave the wrong answer, which an all-at-once fix would have hidden.
+- **Bug 3 was supposed to fire only on data with no missing rows, yet it fired on penguins.** The check `v == ""` never matches this file's `NA`, so to this program penguins *had* no missing rows. That made a fourth, silent bug: the same `""`-vs-`NA` gotcha as Week 1 Day 1.
+- **"Runs clean" is not "correct".** Run 4 had no traceback but printed `None`; only checking against known answers (152 / 68 / 124 and Adelie) caught it.
+- **`None` for "no answer", not `("none", 0)`.** The function returns a species name, so `None` keeps the return type consistent; a tuple only for the empty case would change the type, and `"none"` could be mistaken for a species. Tested with `[{"species": "Adelie"}, {"species": "Gentoo"}]`, which returns `None`.
