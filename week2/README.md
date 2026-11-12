@@ -6,6 +6,7 @@ Phase 0, Week 2 of the Applied Analytics, ML & AI track (Nov 2026).
 
 - **Day 1 — done.** `day1.py` (stdlib `csv` and `os` only): reuses the four Week 1 functions and adds `write_report`, which writes the three answers and the cleaning log to `week2/report.txt`. Details below.
 - **Day 2 — done.** `day2.py`: a deliberately broken copy of the Week 1 program, debugged one fix at a time. Four bugs fixed (three planted, one hidden behind them). Details below.
+- **Day 3 — done.** `day3.py`: publishes species counts and missing-per-column as CSV files with `DictWriter`, then reads them back with `DictReader` and checks them against the Week 1 figures. Details below.
 
 ## Day 1 — answers written to a report file
 
@@ -88,3 +89,46 @@ Each fix was followed by a run:
 - **Bug 3 was supposed to fire only on data with no missing rows, yet it fired on penguins.** The check `v == ""` never matches this file's `NA`, so to this program penguins *had* no missing rows. That made a fourth, silent bug: the same `""`-vs-`NA` gotcha as Week 1 Day 1.
 - **"Runs clean" is not "correct".** Run 4 had no traceback but printed `None`; only checking against known answers (152 / 68 / 124 and Adelie) caught it.
 - **`None` for "no answer", not `("none", 0)`.** The function returns a species name, so `None` keeps the return type consistent; a tuple only for the empty case would change the type, and `"none"` could be mistaken for a species. Tested with `[{"species": "Adelie"}, {"species": "Gentoo"}]`, which returns `None`.
+
+## Day 3 — publishing the answers as CSV
+
+```bash
+python week2/day3.py
+```
+
+Output:
+
+```
+Wrote week2/species_counts.csv and week2/missing_per_column.csv from 344 rows
+species_counts.csv matches Week 1: True
+missing_per_column.csv matches Week 1: True
+species total equals row count: True
+```
+
+[`species_counts.csv`](species_counts.csv):
+
+```
+species,count
+Adelie,152
+Chinstrap,68
+Gentoo,124
+```
+
+[`missing_per_column.csv`](missing_per_column.csv):
+
+```
+column,missing_count
+bill_depth_mm,2
+bill_length_mm,2
+body_mass_g,2
+flipper_length_mm,2
+sex,11
+```
+
+### Takeaways
+
+- **The round trip is the check.** Writing a file proves nothing; reading it back with `DictReader` and comparing with the known answers (152 / 68 / 124, and the five missing counts) does. A wrong count like Adelie 151 opens cleanly and has a header, so only the known answer catches it.
+- **Counter pattern vs pre-filled zeros changes the output.** Week 1's `missing_per_column` started every column at 0; here only columns with a missing value get a key, so `species`, `island` and `year` are left out, as the published file expects.
+- **`DictReader` gives back strings.** `"152"` has to become `int("152")` before comparing with `152`, or every check fails.
+- **`newline=""` and `\r\n`.** `csv` writes `\r\n` line endings by default; opening with `newline=""` stops Python adding a second `\r` on Windows. The files match the expected contents byte for byte.
+- **Copied, not imported.** `week2/day2.py` runs `main()` at import (no `__main__` guard), so importing its functions would run that program too. The guard is what makes a script safe to import.

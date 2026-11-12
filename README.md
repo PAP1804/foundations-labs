@@ -32,6 +32,7 @@ foundations-labs/
 |-----|-----|--------|
 | 1 | [`day1.py`](week2/day1.py): Week 1 answers written to [`report.txt`](week2/report.txt) | Done |
 | 2 | [`day2.py`](week2/day2.py): debug a broken CSV program, one fix per run | Done |
+| 3 | [`day3.py`](week2/day3.py): publish answers to [`species_counts.csv`](week2/species_counts.csv) and [`missing_per_column.csv`](week2/missing_per_column.csv), verified by round trip | Done |
 
 ## Running
 
