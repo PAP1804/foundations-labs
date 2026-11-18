@@ -33,6 +33,7 @@ foundations-labs/
 | 1 | [`day1.py`](week2/day1.py): Week 1 answers written to [`report.txt`](week2/report.txt) | Done |
 | 2 | [`day2.py`](week2/day2.py): debug a broken CSV program, one fix per run | Done |
 | 3 | [`day3.py`](week2/day3.py): publish answers to [`species_counts.csv`](week2/species_counts.csv) and [`missing_per_column.csv`](week2/missing_per_column.csv), verified by round trip | Done |
+| 4 | [`day4.py`](week2/day4.py): hardened against a missing file and rows with no species, with a sum check; tested on [`penguins_corrupt.csv`](week2/penguins_corrupt.csv) | Done |
 
 ## Running
 
@@ -52,6 +53,7 @@ Week 2 scripts use paths relative to the repo root, so they must be run from the
 | Dataset | File | Source | License | SHA-256 | Used in |
 |---------|------|--------|---------|---------|---------|
 | Palmer Penguins | [`week1/penguins.csv`](week1/penguins.csv) | Gorman, Williams & Fraser (2014), via [palmerpenguins](https://github.com/allisonhorst/palmerpenguins) | CC0 | `f204db2c753b0937caac3cb35258562c14f073e4bbc76be24b4c51ce22767a93` | Weeks 1–2 |
+| Palmer Penguins, corrupted | [`week2/penguins_corrupt.csv`](week2/penguins_corrupt.csv) | `week1/penguins.csv` with 2 species cells changed (rows 1 and 277) | CC0 | `4dfd7a91748e814f1aedafbe737a9d4682f9f71e95e220b62f44ee1aa1f6a9db` | Week 2 Day 4 |
 
 Verify a dataset before running: `sha256sum week1/penguins.csv` (macOS: `shasum -a 256 week1/penguins.csv`).
 

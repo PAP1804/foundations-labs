@@ -7,6 +7,7 @@ Phase 0, Week 2 of the Applied Analytics, ML & AI track (Nov 2026).
 - **Day 1 — done.** `day1.py` (stdlib `csv` and `os` only): reuses the four Week 1 functions and adds `write_report`, which writes the three answers and the cleaning log to `week2/report.txt`. Details below.
 - **Day 2 — done.** `day2.py`: a deliberately broken copy of the Week 1 program, debugged one fix at a time. Four bugs fixed (three planted, one hidden behind them). Details below.
 - **Day 3 — done.** `day3.py`: publishes species counts and missing-per-column as CSV files with `DictWriter`, then reads them back with `DictReader` and checks them against the Week 1 figures. Details below.
+- **Day 4 — done.** `day4.py`: the Day 3 functions hardened against bad input: a missing file exits with code 1, rows with no species are logged and skipped, and `check_counts` refuses to print counts that don't add up. Tested on `penguins_corrupt.csv`. Details below.
 
 ## Day 1 — answers written to a report file
 
@@ -132,3 +133,48 @@ sex,11
 - **`DictReader` gives back strings.** `"152"` has to become `int("152")` before comparing with `152`, or every check fails.
 - **`newline=""` and `\r\n`.** `csv` writes `\r\n` line endings by default; opening with `newline=""` stops Python adding a second `\r` on Windows. The files match the expected contents byte for byte.
 - **Copied, not imported.** `week2/day2.py` runs `main()` at import (no `__main__` guard), so importing its functions would run that program too. The guard is what makes a script safe to import.
+
+## Day 4 — hardening: exceptions and skipped rows
+
+`penguins_corrupt.csv` is `week1/penguins.csv` with two cells changed: row 1 (file line 2, an Adelie from Torgersen) has its species blanked, and row 277 (file line 278, a Chinstrap from Dream) has its species set to `NA`.
+
+Corrupt run (stderr and stdout together):
+
+```bash
+python week2/day4.py week2/penguins_corrupt.csv
+```
+
+```
+skipped a row with missing species: {'species': '', 'island': 'Torgersen', 'bill_length_mm': '39.1', 'bill_depth_mm': '18.7', 'flipper_length_mm': '181', 'body_mass_g': '3750', 'sex': 'male', 'year': '2007'}
+skipped a row with missing species: {'species': 'NA', 'island': 'Dream', 'bill_length_mm': '46.5', 'bill_depth_mm': '17.9', 'flipper_length_mm': '192', 'body_mass_g': '3500', 'sex': 'female', 'year': '2007'}
+{'Adelie': 151, 'Chinstrap': 67, 'Gentoo': 124}
+rows read: 344 | skipped: 2
+missing per column: {'bill_depth_mm': 2, 'bill_length_mm': 2, 'body_mass_g': 2, 'flipper_length_mm': 2, 'sex': 11, 'species': 2}
+```
+
+Clean run:
+
+```bash
+python week2/day4.py week1/penguins.csv
+```
+
+```
+{'Adelie': 152, 'Chinstrap': 68, 'Gentoo': 124}
+rows read: 344 | skipped: 0
+missing per column: {'bill_depth_mm': 2, 'bill_length_mm': 2, 'body_mass_g': 2, 'flipper_length_mm': 2, 'sex': 11}
+```
+
+Missing file:
+
+```
+$ python week2/day4.py week2/nope.csv
+error: no such file: week2/nope.csv        (exit code 1)
+```
+
+### Takeaways
+
+- **A broken assumption fails loudly; bad data is counted.** A missing input file means the program can't do its job, so it stops with exit code 1 and names the file. A row with no species is data, so it is skipped, logged and counted, and the run goes on.
+- **Errors go to stderr, results to stdout.** With `2>/dev/null` only the counts are left, so the results can be piped or saved without the skip messages mixed in.
+- **The check turns "nothing crashed" into "the numbers add up".** 151 + 67 + 124 = 342 = 344 − 2, so the corrupt run passes honestly. `check_counts({"Adelie": 151}, 344, 2)` raises `ValueError: counts sum to 151 but 342 rows were kept`, and the program prints no counts.
+- **`KeyError` and a missing value are different failures.** `DictReader` always gives every row a `species` key when the header has one, so the `KeyError` branch only fires for a file without that column; blank and `NA` values are the case that actually happened here. Both are tested.
+- **`missing_per_column` now reports `species: 2`.** The corruption shows up in the existing per-column count too, which confirms the two skipped rows from a second direction.
